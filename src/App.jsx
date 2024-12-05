@@ -4,11 +4,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 
 function App() {
-  const output = [
-    { name: "Cooking", status: "Processing" },
-    { name: "Cleaning", status: "Processing" }
-  ];
-
+  const output = [];
   const [searchResult, setSearchResult] = useState(output);
   const [inputVal, setInputVal] = useState("");
   const [name, setName] = useState("");
@@ -22,11 +18,11 @@ function App() {
 
   // Handle task edit
   const handleEdit = (field, value, index) => {
-    if (field === 'name') {
+    if (field === "name") {
       setTaskName(value);
-    } else if (field === 'status') {
+    } else if (field === "status") {
       setTaskStatus(value);
-    } else if (field === 'start') {
+    } else if (field === "start") {
       setEditIndex(index);
       const task = searchResult[index];
       setTaskName(task.name);
@@ -68,7 +64,9 @@ function App() {
     inputVal === ""
       ? setSearchResult(output)
       : setSearchResult(
-          searchResult.filter((task) => task.name.toLowerCase().includes(inputVal.toLowerCase()))
+          searchResult.filter((task) =>
+            task.name.toLowerCase().includes(inputVal.toLowerCase())
+          )
         );
   };
 
