@@ -1,5 +1,5 @@
 import styles from './App.module.css';
-import { Task } from './Task';
+import { Task } from './Task.jsx';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
