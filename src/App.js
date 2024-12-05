@@ -1,47 +1,50 @@
 import styles from './App.module.css';
-import { User } from './User';
+import { Task } from './Task';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
 function App() {
 
   const output = [
-    { name: "Fei", age: 35}, 
-    { name: "Lin", age: 44}
+    { name: "Cooking", status: 0}, 
+    { name: "Cleaning", status: 0}
   ];
 
   const [searchResult, setSearchResult] = useState(output);
   const [inputVal, setInputVal] = useState("");
   const [name, setName] = useState("");
-  const [age, setAge] = useState(0);
+  const [status, setStatus] = useState(0);
   //get the user name from the input field
-  const getUserName = (val) => {
+  const getTaskName = (val) => {
     setName(val.target.value);
   };
   //get the user age from the input field
-  const getUserAge = (val) => {
-    setAge(parseInt(val.target.value, 10));
+  const getStatus = (val) => {
+    setStatus(parseInt(val.target.value, 10));
   };
   // create a function that will create a new user
-  const createUser = () => { 
-    console.log("Name: ", name);
-    setSearchResult([...searchResult, { name: name, age: age }]);
-    setAge(0);
+  const createTask = () => { 
+    setSearchResult([...searchResult, { name: name, status: status }]);
+    setStatus(0);
     setName("");
   };
+  //useEffect to check if the user list is updated
   useEffect(() => {
-    console.log("User List Updated: ", searchResult);
+    console.log("Task List Updated: ", searchResult);
   }, [searchResult]);
+  //get the value from the input field
   const getInputVal = (val) => {
     setInputVal(val.target.value);
   };
-  const userSearch = () => {
+  //search for the user by name
+  const taskSearch = () => {
     inputVal === ""
       ? setSearchResult(output)
       : setSearchResult(
-          searchResult.filter((user) => user.name.toLowerCase().includes(inputVal))
+          searchResult.filter((task) => task.name.toLowerCase().includes(inputVal))
         );
   };
+
   return (
     <div>
       <h1>Users</h1>
@@ -51,18 +54,18 @@ function App() {
           <th>Age</th>
         </thead>
         <tbody>
-          {searchResult.map((user) => (
-            <User name={user.name} age={user.age} />
+          {searchResult.map((task) => (
+            <Task name={task.name} status={task.status} />
           ))}
         </tbody>
         <div>
-        <input type="text" value={name} onChange={getUserName}/>
-        <input type="number" value={age} onChange={getUserAge}/>   
-        <button onClick = {createUser}>Add User</button>
+        <input type="text" value={name} onChange={getTaskName}/>
+        <input type="number" value={status} onChange={getStatus}/>   
+        <button onClick = {createTask}>Add TAsk</button>
         </div>
         <div>
           <input type="text" onChange={getInputVal}/>
-          <button onClick={userSearch}>User Search by Name</button>
+          <button onClick={taskSearch}>Search by Name</button>
         </div>
       </table>
     </div>
