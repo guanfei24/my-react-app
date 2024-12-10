@@ -28,9 +28,6 @@ export default function DataList() {
             );
         })}
     </div>
-    <div>
-        <input type="button" value="click"/>
-    </div>
     </>
     );
 };
