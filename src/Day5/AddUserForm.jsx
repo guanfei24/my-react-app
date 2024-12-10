@@ -1,9 +1,8 @@
-function AddUserForm() {
+export default function AddUserForm() {
   return (
-    <>
-      <h1>Add User</h1>
-    </>
-  );
-}
+    <div>
+      <h1>Add User</h1> 
 
-export default AddUserForm;
+    </div>
+  );
+};
