@@ -2,7 +2,8 @@ import styles from './App.module.css';
 import { Task } from './Task.jsx';
 import { useState } from 'react';
 import { useEffect } from 'react';
-
+import Counter from './problem/Counter.jsx';
+import DataList from './Day4/DataList.jsx';
 function App() {
   const output = [];
   const [searchResult, setSearchResult] = useState(output);
@@ -120,7 +121,10 @@ function App() {
         />
         <button onClick={taskSearch}>Search</button>
       </div>
+      <Counter />
+      <DataList/>
     </div>
+    
   );
 }
 
