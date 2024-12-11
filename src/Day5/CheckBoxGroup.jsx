@@ -1,48 +1,39 @@
 import { useEffect, useState } from "react";
 import "./style.css";
+const itemList = [
+  { id: 1, name: "Kosher", checked: false },
+  { id: 2, name: "NO Celery", checked: false },
+  { id: 3, name: "No Egg", checked: false },
+];
 function CheckBoxGroup() {
-  const [selectAll, setSelectAll] = useState(false);
-  const [kosher, setKosher] = useState(false);
-  const [noCelery, setNoCelery] = useState(false);
-  const [noEgg, setNoEgg] = useState(false);
-  const [selectValue, setSelectValue] = useState("");
-
+  //render the group by array
+  const [checkBoxes, setCheckBoxes] = useState(itemList);
   const handleSelectAll = (e) => {
-    setSelectAll(e.target.checked);
-    if (e.target.checked) {
-      setKosher(true);
-      setNoCelery(true);
-      setNoEgg(true);
-    } else {
-      setKosher(false);
-      setNoCelery(false);
-      setNoEgg(false);
-    }
+    checkBoxes.map((item) => (item.checked = !item.checked));
   };
-  useEffect(() => {
-    if (kosher && noCelery && noEgg) {
-      setSelectAll(true);
-    } else {
-      setSelectAll(false);
-    }
-    let str = "";
-    if (kosher) str = "Kosher,";
-    if (noCelery) str = str + " No Celery,";
-    if (noEgg) str = str + " No Egg";
-
-    setSelectValue(str.replace(/,$/, ""));
-  }, [kosher, noCelery, noEgg]);
-
+  const selectAll = checkBoxes.every((item) => item.checked);
+  const handleCheckBox = (id) => {
+    setCheckBoxes(
+      checkBoxes.map((item) => {
+        if (id === item.id) {
+          return { ...item, checked: !item.checked };
+        } else {
+          return item;
+        }
+      })
+    );
+  };
   const clearAll = () => {
-    setSelectAll(false);
-    setKosher(false);
-    setNoCelery(false);
-    setNoEgg(false);
+    checkBoxes.map((item) => (item.checked = false));
   };
+  const selectedValues = Array.prototype.join.call(
+    checkBoxes.filter((item) => item.checked === true).map((ee) => ee.name),
+    ", "
+  );
   return (
     <div className="divCheckBoxGroup">
       <h1>CheckBoxGroup</h1>
-      <h3>Selected Value : {selectValue}</h3>
+      <h3>Selected Value :{<span>{selectedValues}</span>}</h3>
       <div>
         <label>
           <input
@@ -53,44 +44,25 @@ function CheckBoxGroup() {
           Select All
         </label>
       </div>
+      {checkBoxes.map((item) => {
+        const { id, name, checked } = item;
+        return (
+          <div key={id}>
+            <input
+              type="checkbox"
+              checked={checked}
+              onChange={() => handleCheckBox(id)}
+            />
+            <span>{name}</span>
+          </div>
+        );
+      })}
       <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={kosher}
-            onChange={(e) => {
-              setKosher(e.target.checked);
-            }}
-          />
-          Kosher
-        </label>
-      </div>
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={noCelery}
-            onChange={(e) => {
-              setNoCelery(e.target.checked);
-            }}
-          />
-          No Celery(inc celeriac)
-        </label>
-      </div>
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={noEgg}
-            onChange={(e) => {
-              setNoEgg(e.target.checked);
-            }}
-          />
-          No Egg
-        </label>
-      </div>
-      <div>
-        <button type="button" onClick={clearAll} className="btnClearAll">
+        <button
+          type="button"
+          onClick={() => clearAll()}
+          className="btnClearAll"
+        >
           Clear All
         </button>
       </div>
