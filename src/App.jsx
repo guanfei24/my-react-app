@@ -1,5 +1,3 @@
-import "./Day5/style.css";
-import { Task } from "./Task.jsx";
 import { useState } from "react";
 import { useEffect } from "react";
 import Counter from "./problem/Counter.jsx";
@@ -12,9 +10,8 @@ function App() {
     <>
       {/* <Counter /> */}
       {/* <DataList /> */}
+      <CheckBoxGroup />
       <AddUserForm />
-      <CheckBoxGroup/>
-
     </>
   );
 }
