@@ -9,9 +9,9 @@ function App() {
   return (
     <>
       {/* <Counter /> */}
-      {/* <DataList /> */}
-      <CheckBoxGroup />
-      <AddUserForm />
+      <DataList />
+      {/* <CheckBoxGroup /> */}
+      {/* <AddUserForm /> */}
     </>
   );
 }
