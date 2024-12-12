@@ -11,9 +11,9 @@ export default function AddUserForm() {
     setUserList([
       ...userList,
       {
-        firstName: firstName,
-        lastName: lastName,
-        phone: phone,
+        firstName,
+        lastName,
+        phone,
       },
     ]);
     setFirstName("");

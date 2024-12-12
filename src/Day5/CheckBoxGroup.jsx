@@ -6,12 +6,17 @@ const itemList = [
   { id: 3, name: "No Egg", checked: false },
 ];
 function CheckBoxGroup() {
-  //render the group by array
   const [checkBoxes, setCheckBoxes] = useState(itemList);
-  const handleSelectAll = (e) => {
-    checkBoxes.map((item) => (item.checked = !item.checked));
-  };
   const selectAll = checkBoxes.every((item) => item.checked);
+
+  const handleSelectAll = () => {
+    setCheckBoxes(
+      checkBoxes.map((item) => {
+        return { ...item, checked: !selectAll };
+      })
+    );
+  };
+
   const handleCheckBox = (id) => {
     setCheckBoxes(
       checkBoxes.map((item) => {
@@ -24,7 +29,11 @@ function CheckBoxGroup() {
     );
   };
   const clearAll = () => {
-    checkBoxes.map((item) => (item.checked = false));
+    setCheckBoxes(
+      checkBoxes.map((item) => {
+        return { ...item, checked: false };
+      })
+    );
   };
   const selectedValues = Array.prototype.join.call(
     checkBoxes.filter((item) => item.checked === true).map((ee) => ee.name),
@@ -58,11 +67,7 @@ function CheckBoxGroup() {
         );
       })}
       <div>
-        <button
-          type="button"
-          onClick={() => clearAll()}
-          className="btnClearAll"
-        >
+        <button type="button" onClick={clearAll} className="btnClearAll">
           Clear All
         </button>
       </div>
