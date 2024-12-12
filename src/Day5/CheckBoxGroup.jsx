@@ -36,7 +36,7 @@ function CheckBoxGroup() {
     );
   };
   const selectedValues = Array.prototype.join.call(
-    checkBoxes.filter((item) => item.checked === true).map((ee) => ee.name),
+    checkBoxes.filter((item) => item.checked === true).map((item) => item.name),
     ", "
   );
   return (
