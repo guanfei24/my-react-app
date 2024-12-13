@@ -5,6 +5,8 @@ export default function EventList() {
   //events List
   const [events, setEvents] = useState([]);
   const [copyEvents, setCopyEvents] = useState([]);
+  const [orderStatus, setOrderStatus] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
   //useEffect to initialize EventList
   useEffect(() => {
     fetchMockData().then((data) => {
@@ -23,50 +25,43 @@ export default function EventList() {
     });
   }, []);
   //id counter
-  function counter(userlist) {
-    let id = userlist.length + 1;
-    return id;
+  function counter() {
+    const maxEvent = events.reduce((max, currentEvent) => {
+      return currentEvent.eventid > max.eventid ? currentEvent : max;
+    }, events[0]);
+    console.log("Event with max ID:", maxEvent.eventid);
+    return maxEvent.eventid + 1;
   }
   //add event function-----by form onSubmit
   const addEvent = () => {
-    const id = counter(events);
-    setEvents([
-      ...events,
-      {
-        eventid: id,
-        eventname: "",
-        starttime: "",
-        endtime: "",
-        isEdit: true,
-      },
-    ]);
-    setCopyEvents([
-      ...events,
-      {
-        eventid: id,
-        eventname: "",
-        starttime: "",
-        endtime: "",
-        isEdit: true,
-      },
-    ]);
+    const id = counter();
+    const newEvent = {
+      eventid: id,
+      eventname: "",
+      starttime: "",
+      endtime: "",
+      isEdit: true,
+    };
+    setEvents([...events, newEvent]);
+    setCopyEvents([...events, newEvent]);
   };
   //delete event  -------- delete event from events
   const deleteEvent = (id) => {
-    setEvents(events.filter((item) => item.eventid !== id));
+    const newEvents = events.filter((item) => item.eventid !== id);
+    setEvents(newEvents);
+    setCopyEvents(newEvents);
   };
   // save edit function
   const saveEdit = (event) => {
     if (!inputValidation(event.eventid)) return;
-    const even = copyEvents.filter((item) => item.eventid === event.eventid);
-
+    const even = copyEvents.find((item) => item.eventid === event.eventid);
     //even is an Array [object]****
     //console.log(even[0]);***
     setEvents(
       events.map((item) => {
         if (item.eventid === event.eventid) {
           return {
-            ...even[0],
+            ...even,
             isEdit: !item.isEdit,
           };
         } else {
@@ -77,17 +72,17 @@ export default function EventList() {
   };
   //edit handler(edit and cancel function)
   const editHandler = (id) => {
-    setEvents(
-      events
-        .filter((item) => item.eventname !== "")
-        .map((item) => {
-          if (item.eventid === id) {
-            return { ...item, isEdit: !item.isEdit };
-          } else {
-            if (item.eventname !== "") return item;
-          }
-        })
-    );
+    const newEvents = events
+      .filter((item) => item.eventname !== "")
+      .map((item) => {
+        if (item.eventid === id) {
+          return { ...item, isEdit: !item.isEdit };
+        } else {
+          if (item.eventname !== "") return item;
+        }
+      });
+    setEvents(newEvents);
+    setCopyEvents(newEvents);
   };
   //udpate input of every item in events
   const updateInput = (id, type, value) => {
@@ -117,9 +112,27 @@ export default function EventList() {
 
     return true;
   };
+  //orderByDate
+  const orderByDate = (type) => {
+    console.log(orderStatus);
+    const newEvents = [...events].sort((a, b) => {
+      const preTime = new Date(a[type]).getTime();
+      const behTime = new Date(b[type]).getTime();
+      return orderStatus > 0 ? behTime - preTime : preTime - behTime;
+    });
+    const newOrderStatus = orderStatus > 0 ? -1 : 1;
+    setOrderStatus(newOrderStatus);
+    setEvents([...newEvents]);
+  };
+  //search function
+  const eventSearch = (input) => {
+    setSearchInput(input);
+    const result = copyEvents.filter((item) =>
+      item.eventname.toLowerCase().includes(input.toLowerCase())
+    );
+    setEvents(result);
+  };
   /** make up
-   *search function
-   *order function
    *Error Handling
    */
 
@@ -129,12 +142,19 @@ export default function EventList() {
         <button onClick={addEvent} className="add-event-btn">
           Add New Event
         </button>
+        <input
+          type="text"
+          value={searchInput}
+          onChange={(e) => eventSearch(e.target.value)}
+          className="input-search"
+          placeholder="Search by Event"
+        />
         <table className="event-table">
           <thead>
             <tr>
               <td>Event</td>
-              <td>Start</td>
-              <td>End</td>
+              <td onClick={() => orderByDate("starttime")}>Start</td>
+              <td onClick={() => orderByDate("endtime")}>End</td>
               <td>Actions</td>
             </tr>
           </thead>
@@ -202,7 +222,6 @@ export default function EventList() {
               );
             })}
           </tbody>
-          <tfoot>{}</tfoot>
         </table>
       </div>
     </>

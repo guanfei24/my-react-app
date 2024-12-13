@@ -34,7 +34,6 @@ body {
   row-gap: 10px;
   background-color: #e6e2d3;
 }
-input[type="text"],
 input[type="date"] {
   padding: 5px;
   width: 90%;
@@ -44,4 +43,10 @@ input[type="date"] {
 }
 button {
   margin-right: 3px;
+}
+.input-search {
+  margin-top: 10px;
+  border: 1px solid gray;
+  border-radius: 3px;
+  height: 20px;
 }
