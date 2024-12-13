@@ -48,27 +48,28 @@ export default function EventList() {
   //delete event  -------- delete event from events
   const deleteEvent = (id) => {
     const newEvents = events.filter((item) => item.eventid !== id);
+    const newCopyEvents = copyEvents.filter((item) => item.eventid !== id);
     setEvents(newEvents);
-    setCopyEvents(newEvents);
+    setCopyEvents(newCopyEvents);
   };
   // save edit function
   const saveEdit = (event) => {
     if (!inputValidation(event.eventid)) return;
-    const even = copyEvents.find((item) => item.eventid === event.eventid);
+    const newCopyEvent = copyEvents.find((item) => item.eventid === event.eventid);
+    const newEvents = events.map((item) => {
+      if (item.eventid === event.eventid) {
+        return {
+          ...newCopyEvent,
+          isEdit: !item.isEdit,
+        };
+      } else {
+        return item;
+      }
+    })
     //even is an Array [object]****
     //console.log(even[0]);***
-    setEvents(
-      events.map((item) => {
-        if (item.eventid === event.eventid) {
-          return {
-            ...even,
-            isEdit: !item.isEdit,
-          };
-        } else {
-          return item;
-        }
-      })
-    );
+    setEvents(newEvents);
+    setCopyEvents(newEvents);
   };
   //edit handler(edit and cancel function)
   const editHandler = (id) => {
@@ -84,7 +85,7 @@ export default function EventList() {
     setEvents(newEvents);
     setCopyEvents(newEvents);
   };
-  //udpate input of every item in events
+  //update input of every item in events
   const updateInput = (id, type, value) => {
     setCopyEvents(
       copyEvents.map((item) => {
