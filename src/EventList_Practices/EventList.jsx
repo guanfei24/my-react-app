@@ -126,7 +126,6 @@ export default function EventList() {
   return (
     <>
       <div>
-        <h1>Event List</h1>
         <button onClick={addEvent}>Add Event</button>
         <table>
           <thead>
