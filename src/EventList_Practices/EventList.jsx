@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchMockData } from "./getMockDataList";
-
+import "./style.css";
 export default function EventList() {
   //events List
   const [events, setEvents] = useState([]);
@@ -125,9 +125,11 @@ export default function EventList() {
 
   return (
     <>
-      <div>
-        <button onClick={addEvent}>Add Event</button>
-        <table>
+      <div className="container">
+        <button onClick={addEvent} className="add-event-btn">
+          Add New Event
+        </button>
+        <table className="event-table">
           <thead>
             <tr>
               <td>Event</td>

@@ -1,0 +1,46 @@
+body {
+  font-family: Arial, sans-serif;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  padding: 20px;
+  border: 5px solid #e6e2d3;
+  border-radius: 10px;
+}
+.add-event-btn {
+  border: none;
+  border-radius: 5px;
+  width: 150px;
+  height: 50px;
+  background-color: #008cba;
+  color: white;
+}
+.event-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  text-align: center;
+}
+.event-table thead {
+  font-weight: bold;
+  padding: 10px;
+}
+.event-table tbody tr {
+  font-size: small;
+  row-gap: 10px;
+  background-color: #e6e2d3;
+}
+input[type="text"],
+input[type="date"] {
+  padding: 5px;
+  width: 90%;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 3px;
+}
+button {
+  margin-right: 3px;
+}
