@@ -1,105 +1,62 @@
 import { useEffect, useState } from "react";
-import { fetchMockData } from "./getMockDataList";
+import MockDataApi from "./getMockDataList";
 import "./style.css";
 export default function EventList() {
   //events List
   const [events, setEvents] = useState([]);
-  const [copyEvents, setCopyEvents] = useState([]);
+  const [showForm, setShowForm] = useState(false);
   const [orderStatus, setOrderStatus] = useState(0);
   const [searchInput, setSearchInput] = useState("");
+
   //useEffect to initialize EventList
   useEffect(() => {
-    fetchMockData().then((data) => {
-      setEvents(
-        data.map((eve) => {
-          const { eventid, eventname, starttime, endtime } = eve;
-          return { eventid, eventname, starttime, endtime, isEdit: false };
-        })
-      );
-      setCopyEvents(
-        data.map((eve) => {
-          const { eventid, eventname, starttime, endtime } = eve;
-          return { eventid, eventname, starttime, endtime, isEdit: false };
-        })
-      );
-    });
+    (async () => {
+      const events = await MockDataApi.fetchMockData();
+      setEvents(events);
+    })();
   }, []);
-  //id counter
-  function counter() {
-    const maxEvent = events.reduce((max, currentEvent) => {
-      return currentEvent.eventid > max.eventid ? currentEvent : max;
-    }, events[0]);
-    console.log("Event with max ID:", maxEvent.eventid);
-    return maxEvent.eventid + 1;
-  }
+
   //add event function-----by form onSubmit
-  const addEvent = () => {
-    const id = counter();
-    const newEvent = {
-      eventid: id,
-      eventname: "",
-      starttime: "",
-      endtime: "",
-      isEdit: true,
-    };
-    setEvents([...events, newEvent]);
-    setCopyEvents([...events, newEvent]);
+  const openForm = () => {
+    setShowForm(true);
+  };
+  const closeForm = () => {
+    setShowForm(false);
+  };
+  //add event function
+  const addEvent = async (event) => {
+    const newEvent = await MockDataApi.addEvent(event);
+    setEvents((prev) => [...prev, newEvent]);
+    return newEvent;
   };
   //delete event  -------- delete event from events
   const deleteEvent = (id) => {
-    const newEvents = events.filter((item) => item.eventid !== id);
-    const newCopyEvents = copyEvents.filter((item) => item.eventid !== id);
-    setEvents(newEvents);
-    setCopyEvents(newCopyEvents);
+    setEvents((prev) => prev.filter((event) => event.eventid !== id));
   };
   // save edit function
-  const saveEdit = (event) => {
-    if (!inputValidation(event.eventid)) return;
-    const newCopyEvent = copyEvents.find((item) => item.eventid === event.eventid);
-    const newEvents = events.map((item) => {
-      if (item.eventid === event.eventid) {
-        return {
-          ...newCopyEvent,
-          isEdit: !item.isEdit,
-        };
-      } else {
-        return item;
-      }
-    })
-    //even is an Array [object]****
-    //console.log(even[0]);***
-    setEvents(newEvents);
-    setCopyEvents(newEvents);
-  };
-  //edit handler(edit and cancel function)
-  const editHandler = (id) => {
-    const newEvents = events
-      .filter((item) => item.eventname !== "")
-      .map((item) => {
-        if (item.eventid === id) {
-          return { ...item, isEdit: !item.isEdit };
-        } else {
-          if (item.eventname !== "") return item;
-        }
-      });
-    setEvents(newEvents);
-    setCopyEvents(newEvents);
-  };
-  //update input of every item in events
-  const updateInput = (id, type, value) => {
-    setCopyEvents(
-      copyEvents.map((item) => {
-        if (id === item.eventid) {
-          return { ...item, [type]: value };
-        } else {
-          return item;
-        }
+  const saveEdit = (id, newEvent) => {
+    // if (!inputValidation(event.eventid)) return;
+    console.log("id: ", id);
+    console.log("newEvent: ", newEvent);
+    setEvents((prev) =>
+      prev.map((event) => {
+        return event.eventid === id
+          ? {
+              eventid: id,
+              ...newEvent,
+            }
+          : event;
       })
     );
+    console.log("events: ", events);
   };
+  //edit handler(edit and cancel function)
+  const editEvent = (id) => {};
+  //update input of every item in events
+  const updateInput = (id, type, value) => {};
   //input validation
   const inputValidation = (id) => {
-    const { eventname, starttime, endtime } = copyEvents.filter(
+    const { eventname, starttime, endtime } = events.filter(
       (item) => item.eventid === id
     )[0];
     if (eventname === "" || starttime === "" || endtime === "") {
@@ -115,7 +72,6 @@ export default function EventList() {
   };
   //orderByDate
   const orderByDate = (type) => {
-    console.log(orderStatus);
     const newEvents = [...events].sort((a, b) => {
       const preTime = new Date(a[type]).getTime();
       const behTime = new Date(b[type]).getTime();
@@ -128,7 +84,7 @@ export default function EventList() {
   //search function
   const eventSearch = (input) => {
     setSearchInput(input);
-    const result = copyEvents.filter((item) =>
+    const result = events.filter((item) =>
       item.eventname.toLowerCase().includes(input.toLowerCase())
     );
     setEvents(result);
@@ -140,7 +96,7 @@ export default function EventList() {
   return (
     <>
       <div className="container">
-        <button onClick={addEvent} className="add-event-btn">
+        <button onClick={openForm} className="add-event-btn">
           Add New Event
         </button>
         <input
@@ -154,77 +110,158 @@ export default function EventList() {
           <thead>
             <tr>
               <td>Event</td>
-              <td onClick={() => orderByDate("starttime")}>Start</td>
-              <td onClick={() => orderByDate("endtime")}>End</td>
+              <td>Start</td>
+              <td>End</td>
               <td>Actions</td>
             </tr>
           </thead>
           <tbody>
             {events.map((event) => {
-              let { eventid, eventname, starttime, endtime, isEdit } = event;
               return (
-                <tr key={eventid}>
-                  <td>
-                    {isEdit ? (
-                      <input
-                        type="text"
-                        defaultValue={eventname}
-                        onChange={(e) =>
-                          updateInput(eventid, "eventname", e.target.value)
-                        }
-                      />
-                    ) : (
-                      eventname
-                    )}
-                  </td>
-                  <td>
-                    {isEdit ? (
-                      <input
-                        type="date"
-                        defaultValue={starttime}
-                        onChange={(e) =>
-                          updateInput(eventid, "starttime", e.target.value)
-                        }
-                      />
-                    ) : (
-                      starttime
-                    )}
-                  </td>
-                  <td>
-                    {isEdit ? (
-                      <input
-                        type="date"
-                        defaultValue={endtime}
-                        onChange={(e) =>
-                          updateInput(eventid, "endtime", e.target.value)
-                        }
-                      />
-                    ) : (
-                      endtime
-                    )}
-                  </td>
-                  <td>
-                    {isEdit ? (
-                      <button onClick={() => saveEdit(event)}>Save</button>
-                    ) : (
-                      <button onClick={() => editHandler(eventid)}>Edit</button>
-                    )}
-                    {isEdit ? (
-                      <button onClick={() => editHandler(eventid)}>
-                        Cancel
-                      </button>
-                    ) : (
-                      <button onClick={() => deleteEvent(eventid)}>
-                        Delete
-                      </button>
-                    )}
-                  </td>
-                </tr>
+                <EventRow
+                  key={event.eventid}
+                  event={event}
+                  deleteEvent={deleteEvent}
+                  editEvent={editEvent}
+                  saveEdit={saveEdit}
+                />
               );
             })}
           </tbody>
+          <tfoot>
+            {showForm && (
+              <NewEventForm addEvent={addEvent} closeForm={closeForm} />
+            )}
+          </tfoot>
         </table>
       </div>
     </>
+  );
+}
+
+function NewEventForm({ addEvent, closeForm }) {
+  const [event, setEvent] = useState({
+    eventname: "",
+    starttime: "",
+    endtime: "",
+  });
+
+  const { eventName, start, end } = event;
+
+  const inputHandle = (e) => {
+    const { name, value } = e.target;
+    setEvent({ ...event, [name]: value });
+  };
+  const formSubmit = async () => {
+    const res = await addEvent(event);
+    closeForm();
+  };
+
+  return (
+    <tr>
+      <td>
+        <input
+          type="text"
+          value={eventName}
+          name="eventname"
+          onChange={inputHandle}
+        />
+      </td>
+      <td>
+        <input
+          type="date"
+          value={start}
+          name="starttime"
+          onChange={inputHandle}
+        />
+      </td>
+      <td>
+        <input type="date" value={end} name="endtime" onChange={inputHandle} />
+      </td>
+      <td>
+        {}
+        <button type="button" onClick={formSubmit}>
+          Add
+        </button>
+        <button type="button" onClick={closeForm}>
+          Cancel
+        </button>
+      </td>
+    </tr>
+  );
+}
+
+function EventRow({ event, deleteEvent, saveEdit }) {
+  const [isEdit, setIsEdit] = useState(false);
+  const { eventid, eventname, starttime, endtime } = event;
+  const [eventInstance, setEventInstance] = useState({
+    eventid,
+    eventname,
+    starttime,
+    endtime,
+  });
+
+  const inputHandle = (e) => {
+    const { name, value } = e.target;
+    setEventInstance({ ...eventInstance, [name]: value });
+  };
+  const editEvent = () => {
+    setIsEdit(!isEdit);
+  };
+  const handleSave = () => {
+    editEvent(eventid, eventInstance);
+    setIsEdit(false);
+  };
+  return (
+    <tr>
+      <td>
+        {isEdit ? (
+          <input
+            type="text"
+            name="eventname"
+            value={eventInstance.eventname}
+            onChange={inputHandle}
+          />
+        ) : (
+          eventInstance.eventname
+        )}
+      </td>
+      <td>
+        {isEdit ? (
+          <input
+            type="date"
+            name="starttime"
+            value={eventInstance.starttime}
+            onChange={inputHandle}
+          />
+        ) : (
+          eventInstance.starttime
+        )}
+      </td>
+      <td>
+        {isEdit ? (
+          <input
+            type="date"
+            name="endtime"
+            defaultValue={eventInstance.endtime}
+            onChange={inputHandle}
+          />
+        ) : (
+          eventInstance.endtime
+        )}
+      </td>
+      <td>
+        {isEdit ? (
+          <button onClick={handleSave}>Save</button>
+        ) : (
+          <button onClick={() => editEvent(eventid)}>Edit</button>
+        )}
+        {isEdit ? (
+          <button onClick={editEvent}>Cancel</button>
+        ) : (
+          <button onClick={() => deleteEvent(eventid)}>Delete</button>
+        )}
+      </td>
+    </tr>
   );
 }

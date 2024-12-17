@@ -29,7 +29,7 @@ body {
   font-weight: bold;
   padding: 10px;
 }
-.event-table tbody tr {
+.event-table tr {
   font-size: small;
   row-gap: 10px;
   background-color: #e6e2d3;
