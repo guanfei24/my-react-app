@@ -19,7 +19,8 @@ const todoReducer = (state, action) => {
       return [...state, payload];
     case "DELETE_TODO":
       const { id } = payload;
-      state.filter((todo) => todo.id !== id);
+      console.log("DELETE_TODO: ", id);
+      return state.filter((todo) => todo.id !== id);
     case "COMPLETE_TODO":
       return state.map((todo) => {
         if (todo.id === payload.id) {
