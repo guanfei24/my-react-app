@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTodoContext } from "../context/todoContext";
+import TodoSummary from "./todoSummary";
 
 export default function TodoList() {
   const { todos, deleteTodo, completeTodo } = useTodoContext();
@@ -19,6 +20,7 @@ export default function TodoList() {
           </div>
         );
       })}
+      <TodoSummary />
     </div>
   );
 }

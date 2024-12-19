@@ -6,7 +6,7 @@ import { TodoProvider } from "./context/todoContext";
 export default function Index() {
   return (
     <div>
-      <h2>Todo List with Context</h2>
+      <h2>Todo List</h2>
       <TodoProvider>
         <TodoInput />
         <TodoList />

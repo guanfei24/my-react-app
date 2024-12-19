@@ -29,7 +29,7 @@ async function fetchTodoList() {
 async function addTodo(todo) {
   //await sleep(1000);
   console.log("addTodo: ", todo);
-  const newTodo = { id: generateId(), todo };
+  const newTodo = { id: generateId(), todo, isCompleted: false };
   mockData.push(newTodo);
   return newTodo;
 }
