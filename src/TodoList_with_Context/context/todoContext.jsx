@@ -19,12 +19,14 @@ const todoReducer = (state, action) => {
       return [...state, payload];
     case "DELETE_TODO":
       const { id } = payload;
-      console.log(
-        "state.filter: ",
-        state.filter((todo) => todo.id !== id)
-      );
-
-      return state.filter((todo) => todo.id !== id);
+      state.filter((todo) => todo.id !== id);
+    case "COMPLETE_TODO":
+      return state.map((todo) => {
+        if (todo.id === payload.id) {
+          return { ...todo, isCompleted: !todo.isCompleted };
+        }
+        return todo;
+      });
   }
 };
 export function TodoProvider({ children }) {
@@ -48,6 +50,10 @@ export function TodoProvider({ children }) {
   const deleteTodo = (id) => {
     dispatch({ type: "DELETE_TODO", payload: { id } });
   };
+  //update completion status of todo
+  const completeTodo = (id) => {
+    dispatch({ type: "COMPLETE_TODO", payload: { id } });
+  };
 
   return (
     <TodoContext.Provider
@@ -55,6 +61,7 @@ export function TodoProvider({ children }) {
         todos,
         addTodo,
         deleteTodo,
+        completeTodo,
       }}
     >
       {children}

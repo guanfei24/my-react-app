@@ -3,11 +3,13 @@ import { generateId } from "./util";
 const mockData = [
   {
     id: generateId(),
-    todo: "Tech Conference 2024"
+    todo: "Tech Conference 2024",
+    isCompleted: false
   },
   {
     id: generateId(),
-    todo: "AI Workshop"
+    todo: "AI Workshop",
+    isCompleted: true
   }
 ];
 
